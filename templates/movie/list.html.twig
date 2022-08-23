@@ -1,0 +1,13 @@
+{% extends 'base.html.twig' %}
+
+{% block title 'List movies' ~ parent() %}
+
+{% block body %}
+        <h2>List movies{{ genre is not null ? ' ' ~ genre.name }}</h2>
+        <ul>
+            {% for movie in movies %}
+                    <li><a href="{{ path('app_movie_show', {'id': movie.id}) }}">{{ movie.title }}</a> ({{ movie.genresNames|join(', ') }})
+                </li>
+            {% endfor %}
+        </ul>
+{% endblock %}

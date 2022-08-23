@@ -1,0 +1,18 @@
+{% extends 'base.html.twig' %}
+
+{% block title 'Create a new movie' ~ parent() %}
+
+{% block body %}
+    {{ form_start(creation_form) }}
+
+        {{ form_row(creation_form.title) }}
+        {{ form_row(creation_form.description) }}
+
+        {{ form_label(creation_form.genres) }}
+        {{ form_errors(creation_form.genres) }}
+        <div class="overflow-scroll" style="height: 100px;">
+            {{ form_widget(creation_form.genres) }}
+        </div>
+    <button type="submit" class="btn btn-primary">Create</button>
+    {{ form_end(creation_form) }}
+{% endblock %}
