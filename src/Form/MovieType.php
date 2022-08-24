@@ -17,7 +17,9 @@ class MovieType extends AbstractType
     {
         $builder
             ->add('title', TextType::class)
-            ->add('description', TextareaType::class)
+            ->add('description', TextareaType::class, [
+                'required' => false,
+            ])
             ->add('genres', EntityType::class, [
                 'class' => Genre::class,
                 'choice_label' => 'name',
