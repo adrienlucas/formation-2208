@@ -42,10 +42,18 @@ class ImportMoviesDescriptionCommand extends Command
     {
         $io = new SymfonyStyle($input, $output);
 
-        if($input->hasOption('limit')) {
-            $limit = (int) $input->getOption('limit');
-        } else {
-            $limit = null;
+        $limit = $input->getOption('limit');
+        if($limit === null) {
+            $limit = $io->ask(
+                'Do you want to limit the number of movies to enrich ?',
+                'no',
+                function($limit): ?int {
+                    if($limit === 'no' || $limit == (int) $limit) {
+                        return $limit === null ? null : (int) $limit;
+                    }
+                    throw new \Exception('Limit is invalid.');
+                }
+            );
         }
 
         $movies = $this->movieRepository->findBy(

@@ -13,7 +13,6 @@ use Symfony\Contracts\HttpClient\HttpClientInterface;
 class ListMovieController extends AbstractController
 {
     public function __construct(
-        private readonly OmdbGateway $httpClient,
     )
     {
     }
