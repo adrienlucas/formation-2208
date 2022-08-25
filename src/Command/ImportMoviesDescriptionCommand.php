@@ -3,6 +3,7 @@
 namespace App\Command;
 
 use App\Gateway\OmdbGateway;
+use App\Message\EnrichMovieMessage;
 use App\Repository\MovieRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\Console\Attribute\AsCommand;
@@ -12,6 +13,7 @@ use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Style\SymfonyStyle;
+use Symfony\Component\Messenger\MessageBusInterface;
 
 #[AsCommand(
     name: 'app:import-movies-description',
@@ -23,7 +25,7 @@ class ImportMoviesDescriptionCommand extends Command
     public function __construct(
         private readonly MovieRepository $movieRepository,
         private readonly EntityManagerInterface $entityManager,
-        private readonly OmdbGateway $omdbGateway,
+        private readonly MessageBusInterface $bus,
     )
     {
         parent::__construct();
@@ -65,21 +67,17 @@ class ImportMoviesDescriptionCommand extends Command
 
         $io->progressStart(count($movies));
 
-        $actualCount = 0;
         foreach($movies as $movie) {
             $io->progressAdvance();
-            $movieDescription = $this->omdbGateway->getDescriptionByMovie($movie);
 
-            if(!empty($movieDescription)) {
-                $actualCount++;
-                $movie->setDescription($movieDescription);
-            }
+            $this->bus->dispatch(new EnrichMovieMessage($movie));
         }
+
         $io->progressFinish();
 
         $this->entityManager->flush();
 
-        $io->success(sprintf('You have a enriched %d movies.', $actualCount));
+        $io->success(sprintf('You have a enriched movies.'));
 
         return Command::SUCCESS;
     }

@@ -23,3 +23,13 @@ services:
 
     # add more service definitions when explicit configuration is needed
     # please note that last definitions always *replace* previous ones
+
+    # The UserRepository has to be public, in order to use it inside the migrations
+    App\Repository\UserRepository:
+        public: true
+
+    Doctrine\Migrations\Version\DbalMigrationFactory: ~
+    App\Migrations\Factory\MigrationFactoryDecorator:
+        decorates: Doctrine\Migrations\Version\DbalMigrationFactory
+        arguments: ['@App\Migrations\Factory\MigrationFactoryDecorator.inner', '@service_container']
+
